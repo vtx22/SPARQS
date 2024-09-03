@@ -37,7 +37,7 @@ The control byte contains flags for configuration.
 | CNT[7] | Float byte order: 0=MSB, 1=LSB first |
 | CNT[6] | Checksum type: 0=XOR, 1=CRC |
 | CNT[5] | Checksum enable: 0=CS OFF, 1=CS ON |
-| CNT[4] | reserved |
+| CNT[4] | Message Type: 0=VALUE/ID PAIR, 1=STRING |
 | CNT[3] | reserved |
 | CNT[2] | reserved |
 | CNT[1] | reserved |
