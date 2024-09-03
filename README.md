@@ -3,13 +3,7 @@ SPARQ Sender Class to transmit data in SPARQ format
 
 
 # SPARQ Format Documentation
-## Modes
-Two transmission modes are available and switchable at runtime.
-### Byte Mode
-With byte mode selected all values are transmitted in non human readable form as bytes. This format is preferred as it is the most efficient because it uses a minimal amount of data per message.
-### ACSCII Mode (TODO)
-In ASCII Mode all values are transmitted as chars for each decimal digit which is especially useful for console debugging purposes. It is slower and uses more bytes than messages in byte mode. 
-
+All values are transmitted in non human readable form as bytes. This format is preferred as it is the most efficient because it uses a minimal amount of data per message.
 
 ## Message Structure
 Each message has the same format and only differs in length based on the amount of data points transmitted per message.
