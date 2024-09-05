@@ -13,6 +13,7 @@ Each message has the same format and only differs in length based on the amount 
 | SIG | 1 | Signature byte for message and receiver identification |
 | CNT | 1 | Control byte for configuration flags |
 | NVAL | 1 | Number of values transmitted in this message |
+| HCS | 1 | Header XOR Checksum |
 | ID0 | 1 | ID of first value | 
 | VAL0 | 4 | First value as float |
 | ID1 | 1 | ID of second value |
@@ -20,7 +21,7 @@ Each message has the same format and only differs in length based on the amount 
 | ... | ... | ... |
 | CS | 2 | Message checksum bytes |
 
-Total message length: 5 + NVAL * 5
+Total message length: 6 + NVAL * 5
 
 ### SIG
 The signature byte is used by the receiver to identify the sender.
