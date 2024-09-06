@@ -21,7 +21,7 @@ Each message has the same format and only differs in length based on the amount 
 | ... | ... | ... |
 | CS | 2 | Message checksum bytes |
 
-Total message length: 6 + NVAL * 5
+Total message length: 4 + NVAL * 5
 
 ### SIG
 The signature byte is used by the receiver to identify the sender.
