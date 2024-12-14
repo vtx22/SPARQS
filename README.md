@@ -40,6 +40,6 @@ The control byte contains flags for configuration.
 ### NVAL
 Contains the total number of values transmitted.
 ### ID + VAL
-Contains the value as float and its ID.
+Contains the value as float, uint32 or int32 and its ID.
 ### CS
 Configurable Checksum. Default: XOR Checksum
