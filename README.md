@@ -15,9 +15,9 @@ Each message has the same format and only differs in length based on the amount 
 | NVAL | 1 | Number of values transmitted in this message |
 | HCS | 1 | Header XOR Checksum |
 | ID0 | 1 | ID of first value | 
-| VAL0 | 4 | First value as float |
+| VAL0 | 4 | First value |
 | ID1 | 1 | ID of second value |
-| VAL1 | 4 | Second value as float |
+| VAL1 | 4 | Second value |
 | ... | ... | ... |
 | CS | 2 | Message checksum bytes |
 
