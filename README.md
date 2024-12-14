@@ -29,14 +29,14 @@ The signature byte is used by the receiver to identify the sender.
 The control byte contains flags for configuration.
 | Bit | Function |
 | ---- | ---- |
-| CNT[7] | Float byte order: 0=MSB, 1=LSB first |
+| CNT[7] | Data byte order: 0=MSB, 1=LSB first |
 | CNT[6] | Checksum type: 0=XOR, 1=CRC |
-| CNT[5] | Checksum enable: 0=CS OFF, 1=CS ON |
+| CNT[5] | reserved |
 | CNT[4] | Message Type: 0=VALUE/ID PAIR, 1=STRING |
 | CNT[3] | reserved |
 | CNT[2] | reserved |
-| CNT[1] | reserved |
-| CNT[0] | reserved |
+| CNT[1] | Data type MSb |
+| CNT[0] | Data type LSb, 0 = float, 1 = uint32, 2 = int32 |
 ### NVAL
 Contains the total number of values transmitted.
 ### ID + VAL
