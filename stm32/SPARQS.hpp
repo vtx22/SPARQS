@@ -1,8 +1,11 @@
 #pragma once
 
-#include "sparq_types.hpp"
-
 #include <cstdint>
+
+// === Lower the max values for a smaller message buffer ===
+constexpr uint8_t SPARQ_MAX_VALUES = 255;
+
+// === DONT CHANGE ANYTHING BELOW ===
 
 #if defined(STM32F0)
 #include "stm32f0xx_hal.h"
@@ -22,6 +25,10 @@
 #error "Unsupported STM32 microcontroller. Make sure you build with -D STM32F1 for example!"
 #endif
 
+#define SPARQ_MESSAGE_HEADER_LENGTH 4
+#define SPARQ_BYTES_PER_VALUE_PAIR 5
+#define SPARQ_MAX_MESSAGE_LENGTH (SPARQ_MESSAGE_HEADER_LENGTH + SPARQ_MAX_VALUES * SPARQ_BYTES_PER_VALUE_PAIR + 2)
+
 #define SPARQS_HAL_MAX_DELAY 100
 
 class SPARQS
@@ -36,9 +43,10 @@ public:
     static uint8_t xor8_cs(const uint8_t *data, uint32_t length);
 
 private:
-    void _send_message(const uint8_t *buffer, uint32_t length);
-
     uint8_t _message_buffer[SPARQ_MAX_MESSAGE_LENGTH];
+
+    uint8_t _signature = 0xFF;
+    uint8_t _default_id = 0x00;
 
     UART_HandleTypeDef *_huart;
 };
