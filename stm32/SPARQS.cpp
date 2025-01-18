@@ -25,7 +25,7 @@ void SPARQS::print(uint8_t id, uint32_t value)
 }
 
 template <uint8_t N>
-void SPARQS::print(const std::array<uint8_t, N> &ids, const std::array<uint32_t, N> &values);
+void SPARQS::print(const std::array<uint8_t, N> &ids, const std::array<uint32_t, N> &values)
 {
     _message_buffer[0] = _signature;
     _message_buffer[1] = 0x00;
