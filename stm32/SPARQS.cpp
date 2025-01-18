@@ -24,7 +24,7 @@ uint8_t SPARQS::xor8_cs(const uint8_t *data, uint32_t length)
     return cs;
 }
 
-void SPARQS::_send_message(uint8_t *buffer, uint32_t length)
+void SPARQS::_send_message(const uint8_t *buffer, uint32_t length)
 {
     HAL_UART_Transmit(_huart, buffer, length, SPARQS_HAL_MAX_DELAY);
 }

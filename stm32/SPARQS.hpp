@@ -36,7 +36,7 @@ public:
     static uint8_t xor8_cs(const uint8_t *data, uint32_t length);
 
 private:
-    void _send_message(uint8_t *buffer, uint32_t length);
+    void _send_message(const uint8_t *buffer, uint32_t length);
 
     uint8_t _message_buffer[SPARQ_MAX_MESSAGE_LENGTH];
 
