@@ -27,16 +27,16 @@ Total message length: 4 + NVAL * 5 + 2
 The signature byte is used by the receiver to identify the sender.
 ### CNT
 The control byte contains flags for configuration.
-| Bit | Function |
-| ---- | ---- |
-| CNT[7] | Data byte order: 0=MSB, 1=LSB first |
-| CNT[6] | Checksum type: 0=XOR, 1=CRC |
-| CNT[5] | reserved |
-| CNT[4] | Message Type: 0=VALUE/ID PAIR, 1=STRING |
-| CNT[3] | reserved |
-| CNT[2] | reserved |
-| CNT[1] | Data type MSb |
-| CNT[0] | Data type LSb, 0 = float, 1 = uint32, 2 = int32 |
+| Bit | Function | Options |
+| ---- | ---- | ---- |
+| CNT[7] | Data Byte Order | 0 = MSB, 1 = LSB first |
+| CNT[6] | Checksum Type | 0 = XOR8, 1 = CRC16 |
+| CNT[5] | reserved | - |
+| CNT[4] | Message Type | 0 = value/id pair, 1 = string |
+| CNT[3] | reserved | - |
+| CNT[2] | reserved | - |
+| CNT[1] | Data Sign | 0 = unsigned, 1 = signed |
+| CNT[0] | Data Type | 0 = float, 1 = integer |
 ### NVAL
 Contains the total number of values transmitted.
 ### ID + VAL
