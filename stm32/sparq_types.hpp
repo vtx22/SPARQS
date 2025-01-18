@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-#define SPARQ_MAX_VALUES 255
+constexpr uint8_t SPARQ_MAX_VALUES = 255;
 
 // === DONT CHANGE ANYTHING BELOW ===
 
