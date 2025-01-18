@@ -38,7 +38,8 @@ public:
 
     void print(float value);
     void print(uint8_t id, float value);
-    void print(const char *message);
+    void print(uint32_t value);
+    void print(uint8_t id, uint32_t value);
 
     static uint8_t xor8_cs(const uint8_t *data, uint32_t length);
 
