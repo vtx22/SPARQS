@@ -181,21 +181,25 @@ uint8_t SPARQS::xor8_cs(const uint8_t *data, uint32_t length)
 }
 
 template void SPARQS::print<int>(int);
+template void SPARQS::print<unsigned int>(unsigned int);
 template void SPARQS::print<int32_t>(int32_t);
 template void SPARQS::print<uint32_t>(uint32_t);
 template void SPARQS::print<float>(float);
 
 template void SPARQS::print<int>(uint8_t, int);
+template void SPARQS::print<unsigned int>(uint8_t, unsigned int);
 template void SPARQS::print<int32_t>(uint8_t, int32_t);
 template void SPARQS::print<uint32_t>(uint8_t, uint32_t);
 template void SPARQS::print<float>(uint8_t, float);
 
 template void SPARQS::print<int>(const uint8_t *, const int *, uint8_t);
+template void SPARQS::print<unsigned int>(const uint8_t *, const unsigned int *, uint8_t);
 template void SPARQS::print<int32_t>(const uint8_t *, const int32_t *, uint8_t);
 template void SPARQS::print<uint32_t>(const uint8_t *, const uint32_t *, uint8_t);
 template void SPARQS::print<float>(const uint8_t *, const float *, uint8_t);
 
 template void SPARQS::print<int>(const std::initializer_list<uint8_t> &, const std::initializer_list<int> &);
+template void SPARQS::print<unsigned int>(const std::initializer_list<uint8_t> &, const std::initializer_list<unsigned int> &);
 template void SPARQS::print<int32_t>(const std::initializer_list<uint8_t> &, const std::initializer_list<int32_t> &);
 template void SPARQS::print<uint32_t>(const std::initializer_list<uint8_t> &, const std::initializer_list<uint32_t> &);
 template void SPARQS::print<float>(const std::initializer_list<uint8_t> &, const std::initializer_list<float> &);
