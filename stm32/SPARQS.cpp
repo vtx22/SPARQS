@@ -5,6 +5,18 @@ SPARQS::SPARQS(UART_HandleTypeDef *huart) : _huart(huart)
 }
 
 template <typename T>
+void SPARQS::print(T value)
+{
+    print(&_default_id, &value, 1);
+}
+
+template <typename T>
+void SPARQS::print(uint8_t id, T value)
+{
+    print(&id, &value, 1);
+}
+
+template <typename T>
 void SPARQS::print(const uint8_t *ids, const T *values, uint8_t count)
 {
     _insert_header(0x00, count);
@@ -97,6 +109,16 @@ uint8_t SPARQS::xor8_cs(const uint8_t *data, uint32_t length)
 
     return cs;
 }
+
+template void SPARQS::print<int>(int);
+template void SPARQS::print<int32_t>(int32_t);
+template void SPARQS::print<uint32_t>(uint32_t);
+template void SPARQS::print<float>(float);
+
+template void SPARQS::print<int>(uint8_t, int);
+template void SPARQS::print<int32_t>(uint8_t, int32_t);
+template void SPARQS::print<uint32_t>(uint8_t, uint32_t);
+template void SPARQS::print<float>(uint8_t, float);
 
 template void SPARQS::print<int>(const uint8_t *, const int *, uint8_t);
 template void SPARQS::print<int32_t>(const uint8_t *, const int32_t *, uint8_t);

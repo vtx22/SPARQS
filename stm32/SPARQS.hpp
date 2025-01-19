@@ -39,6 +39,12 @@ public:
     SPARQS(UART_HandleTypeDef *huart);
 
     template <typename T>
+    void print(T value);
+
+    template <typename T>
+    void print(uint8_t id, T value);
+
+    template <typename T>
     void print(const uint8_t *ids, const T *values, uint8_t count);
 
     template <typename T>
