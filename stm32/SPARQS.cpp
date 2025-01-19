@@ -96,15 +96,22 @@ void SPARQS::print(const std::initializer_list<uint8_t> &ids, const std::initial
 
 void SPARQS::_insert_header(uint8_t control, uint8_t count)
 {
+    control = control & 0x0F;
+
+    if (SPARQ_PLATFORM_LITTLE_ENDIAN)
+    {
+        control |= (uint8_t)SPARQ_CONTROL::BYTE_ORDER;
+    }
+
     _message_buffer[0] = _signature;
     _message_buffer[1] = control;
     _message_buffer[2] = count;
     _message_buffer[3] = xor8_cs(_message_buffer, 3);
 }
 
-void SPARQS::_insert_to_buffer(uint16_t offset, uint32_t value, bool big_endian)
+void SPARQS::_insert_to_buffer(uint16_t offset, uint32_t value)
 {
-    if (big_endian)
+    if (SPARQ_PLATFORM_LITTLE_ENDIAN)
     {
         _message_buffer[offset] = (value >> 24);
         _message_buffer[offset + 1] = (value >> 16);

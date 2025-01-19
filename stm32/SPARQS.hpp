@@ -33,6 +33,18 @@ constexpr uint8_t SPARQ_MAX_VALUES = 255;
 
 #define SPARQS_HAL_MAX_DELAY 100
 
+constexpr bool SPARQ_PLATFORM_LITTLE_ENDIAN = true;
+
+enum class SPARQ_CONTROL : uint8_t
+{
+    BYTE_ORDER = (1 << 7), // 0 = MSB first, 1 = LSB first
+    CS_TYPE = (1 << 6),    // 0 = XOR8, 1 = CRC16
+    MSG_TYPE = (1 << 2),   // 0 = value/id pair, 1 = string
+    DATA_SIGN = (1 << 1),  // 0 = unsigned, 1 = signed
+    DATA_TYPE = (1 << 0)   // 0 = float, 1 = integer
+
+};
+
 class SPARQS
 {
 public:
@@ -56,7 +68,7 @@ public:
 
 private:
     void _insert_header(uint8_t control, uint8_t count);
-    void _insert_to_buffer(uint16_t offset, uint32_t value, bool big_endian);
+    void _insert_to_buffer(uint16_t offset, uint32_t value);
     void _send_buffer(uint8_t count);
 
     uint16_t _strlen(const char *str) const;
