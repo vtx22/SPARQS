@@ -129,7 +129,7 @@ void SPARQS::_send_buffer(uint8_t count)
     HAL_UART_Transmit(_huart, _message_buffer, len, SPARQS_HAL_MAX_DELAY);
 }
 
-uint16_t SPARQS::_strlen(const char *str)
+uint16_t SPARQS::_strlen(const char *str) const
 {
     uint16_t len = 0;
     while (str[len] != '\0' && len < SPARQ_MAX_VALUES * SPARQ_BYTES_PER_VALUE_PAIR)

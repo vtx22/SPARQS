@@ -59,7 +59,7 @@ private:
     void _insert_to_buffer(uint16_t offset, uint32_t value, bool big_endian);
     void _send_buffer(uint8_t count);
 
-    uint16_t _strlen(const char *str);
+    uint16_t _strlen(const char *str) const;
 
     uint8_t _message_buffer[SPARQ_MAX_MESSAGE_LENGTH];
 
