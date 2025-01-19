@@ -44,6 +44,8 @@ public:
     void print(uint8_t id, uint32_t value);
 
     template <uint8_t N>
+    void print(const std::array<uint8_t, N> &ids, const std::array<float, N> &values);
+    template <uint8_t N>
     void print(const std::array<uint8_t, N> &ids, const std::array<uint32_t, N> &values);
 
     static uint8_t xor8_cs(const uint8_t *data, uint32_t length);

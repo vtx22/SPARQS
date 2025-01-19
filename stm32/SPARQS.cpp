@@ -11,8 +11,7 @@ void SPARQS::print(float value)
 
 void SPARQS::print(uint8_t id, float value)
 {
-    uint32_t v = *(uint32_t *)&value;
-    print(id, v);
+    print({id}, {value});
 }
 
 void SPARQS::print(uint32_t value)
@@ -22,6 +21,19 @@ void SPARQS::print(uint32_t value)
 void SPARQS::print(uint8_t id, uint32_t value)
 {
     print({id}, {value});
+}
+
+template <uint8_t N>
+void SPARQS::print(const std::array<uint8_t, N> &ids, const std::array<float, N> &values)
+{
+    std::array<uint32_t, N> v;
+
+    for (uint8_t i = 0; i < N; i++)
+    {
+        v[i] = *(uint32_t *)&values[i];
+    }
+
+    print(ids, v);
 }
 
 template <uint8_t N>
