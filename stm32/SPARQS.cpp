@@ -6,16 +6,11 @@ SPARQS::SPARQS(UART_HandleTypeDef *huart) : _huart(huart)
 
 void SPARQS::print(const char *message)
 {
-    uint16_t message_length = strlen(message);
+    uint16_t message_length = _strlen(message);
 
     if (message_length == 0)
     {
         return;
-    }
-
-    if (message_length > SPARQ_MAX_VALUES * SPARQ_BYTES_PER_VALUE_PAIR)
-    {
-        message_length = SPARQ_MAX_VALUES * SPARQ_BYTES_PER_VALUE_PAIR;
     }
 
     // We have to add padding zeros because the message length must be a multiple of SPARQ_BYTES_PER_VALUE_PAIR
@@ -132,6 +127,16 @@ void SPARQS::_send_buffer(uint8_t count)
     _message_buffer[len + 1] = xor8_cs(_message_buffer, len);
 
     HAL_UART_Transmit(_huart, _message_buffer, len, SPARQS_HAL_MAX_DELAY);
+}
+
+uint16_t SPARQS::_strlen(const char *str)
+{
+    uint16_t len = 0;
+    while (str[len] != '\0' && len < SPARQ_MAX_VALUES * SPARQ_BYTES_PER_VALUE_PAIR)
+    {
+        len++;
+    }
+    return len;
 }
 
 uint8_t SPARQS::xor8_cs(const uint8_t *data, uint32_t length)

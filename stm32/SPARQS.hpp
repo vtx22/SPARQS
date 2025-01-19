@@ -26,7 +26,6 @@ constexpr uint8_t SPARQ_MAX_VALUES = 255;
 #endif
 
 #include <initializer_list>
-#include <cstring>
 
 #define SPARQ_MESSAGE_HEADER_LENGTH 4
 #define SPARQ_BYTES_PER_VALUE_PAIR 5
@@ -59,6 +58,8 @@ private:
     void _insert_header(uint8_t control, uint8_t count);
     void _insert_to_buffer(uint16_t offset, uint32_t value, bool big_endian);
     void _send_buffer(uint8_t count);
+
+    uint16_t _strlen(const char *str);
 
     uint8_t _message_buffer[SPARQ_MAX_MESSAGE_LENGTH];
 
