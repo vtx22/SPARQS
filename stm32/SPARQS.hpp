@@ -26,6 +26,7 @@ constexpr uint8_t SPARQ_MAX_VALUES = 255;
 #endif
 
 #include <initializer_list>
+#include <type_traits>
 
 #define SPARQ_MESSAGE_HEADER_LENGTH 4
 #define SPARQ_BYTES_PER_VALUE_PAIR 5

@@ -50,7 +50,18 @@ void SPARQS::print(uint8_t id, T value)
 template <typename T>
 void SPARQS::print(const uint8_t *ids, const T *values, uint8_t count)
 {
-    _insert_header(0x00, count);
+    uint8_t control = 0x00;
+    if (!std::is_same<T, float>::value)
+    {
+        control |= (uint8_t)SPARQ_CONTROL::DATA_TYPE;
+    }
+
+    if (std::is_same<T, int>::value || std::is_same<T, int32_t>::value)
+    {
+        control |= (uint8_t)SPARQ_CONTROL::DATA_SIGN;
+    }
+
+    _insert_header(control, count);
 
     for (uint8_t i = 0; i < count; i++)
     {
@@ -72,7 +83,18 @@ void SPARQS::print(const std::initializer_list<uint8_t> &ids, const std::initial
         return;
     }
 
-    _insert_header(0x00, ids.size());
+    uint8_t control = 0x00;
+    if (!std::is_same<T, float>::value)
+    {
+        control |= (uint8_t)SPARQ_CONTROL::DATA_TYPE;
+    }
+
+    if (std::is_same<T, int>::value || std::is_same<T, int32_t>::value)
+    {
+        control |= (uint8_t)SPARQ_CONTROL::DATA_SIGN;
+    }
+
+    _insert_header(control, ids.size());
 
     uint8_t i = 0;
     for (const auto &id : ids)
