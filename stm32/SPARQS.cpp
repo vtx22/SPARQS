@@ -94,6 +94,6 @@ uint8_t SPARQS::xor8_cs(const uint8_t *data, uint32_t length)
     return cs;
 }
 
-template void SPARQS::print<int>(const uint8_t *, const int *, uint8_t);
+template void SPARQS::print<int32_t>(const uint8_t *, const int32_t *, uint8_t);
 template void SPARQS::print<uint32_t>(const uint8_t *, const uint32_t *, uint8_t);
 template void SPARQS::print<float>(const uint8_t *, const float *, uint8_t);
