@@ -58,7 +58,7 @@ void SPARQS::print(const uint8_t *ids, const T *values, uint8_t count)
         _message_buffer[offset] = ids[i];
 
         uint32_t v32 = *(uint32_t *)&values[i];
-        _insert_to_buffer(offset + 1, v32, false);
+        _insert_to_buffer(offset + 1, v32);
     }
 
     _send_buffer(count);
@@ -87,7 +87,7 @@ void SPARQS::print(const std::initializer_list<uint8_t> &ids, const std::initial
         uint16_t offset = SPARQ_MESSAGE_HEADER_LENGTH + i * SPARQ_BYTES_PER_VALUE_PAIR;
 
         uint32_t v32 = *(uint32_t *)&value;
-        _insert_to_buffer(offset + 1, v32, false);
+        _insert_to_buffer(offset + 1, v32);
         i++;
     }
 
