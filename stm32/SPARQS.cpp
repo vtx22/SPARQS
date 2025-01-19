@@ -41,10 +41,10 @@ void SPARQS::print(const std::array<uint8_t, N> &ids, const std::array<uint32_t,
 {
     _message_buffer[0] = _signature;
     _message_buffer[1] = 0x00;
-    _message_buffer[2] = ids.size();
+    _message_buffer[2] = N;
     _message_buffer[3] = xor8_cs(_message_buffer, 3);
 
-    for (uint8_t i = 0; i < ids.size(); i++)
+    for (uint8_t i = 0; i < N; i++)
     {
         uint16_t offset = SPARQ_MESSAGE_HEADER_LENGTH + i * SPARQ_BYTES_PER_VALUE_PAIR;
 
@@ -55,7 +55,7 @@ void SPARQS::print(const std::array<uint8_t, N> &ids, const std::array<uint32_t,
         _message_buffer[offset + 4] = (values[i] & 0xFF);
     }
 
-    uint16_t len = SPARQ_MESSAGE_HEADER_LENGTH + ids.size() * SPARQ_BYTES_PER_VALUE_PAIR;
+    uint16_t len = SPARQ_MESSAGE_HEADER_LENGTH + N * SPARQ_BYTES_PER_VALUE_PAIR;
 
     _message_buffer[len] = 0x00;
     _message_buffer[len + 1] = xor8_cs(_message_buffer, len);
