@@ -7,10 +7,7 @@ SPARQS::SPARQS(UART_HandleTypeDef *huart) : _huart(huart)
 template <typename T>
 void SPARQS::print(const uint8_t *ids, const T *values, uint8_t count)
 {
-    _message_buffer[0] = _signature;
-    _message_buffer[1] = 0x00;
-    _message_buffer[2] = count;
-    _message_buffer[3] = xor8_cs(_message_buffer, 3);
+    _insert_header(0x00, count);
 
     for (uint8_t i = 0; i < count; i++)
     {
@@ -32,10 +29,7 @@ void SPARQS::print(const std::initializer_list<uint8_t> &ids, const std::initial
         return;
     }
 
-    _message_buffer[0] = _signature;
-    _message_buffer[1] = 0x00;
-    _message_buffer[2] = ids.size();
-    _message_buffer[3] = xor8_cs(_message_buffer, 3);
+    _insert_header(0x00, ids.size());
 
     uint8_t i = 0;
     for (const auto &id : ids)
@@ -55,6 +49,14 @@ void SPARQS::print(const std::initializer_list<uint8_t> &ids, const std::initial
     }
 
     _send_buffer(ids.size());
+}
+
+void SPARQS::_insert_header(uint8_t control, uint8_t count)
+{
+    _message_buffer[0] = _signature;
+    _message_buffer[1] = control;
+    _message_buffer[2] = count;
+    _message_buffer[3] = xor8_cs(_message_buffer, 3);
 }
 
 void SPARQS::_insert_to_buffer(uint16_t offset, uint32_t value, bool big_endian)
