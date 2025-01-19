@@ -4,7 +4,8 @@ SPARQS::SPARQS(UART_HandleTypeDef *huart) : _huart(huart)
 {
 }
 
-void SPARQS::print(const uint8_t *ids, const uint32_t *values, uint8_t count)
+template <typename T>
+void SPARQS::print(const uint8_t *ids, const T *values, uint8_t count)
 {
     _message_buffer[0] = _signature;
     _message_buffer[1] = 0x00;
@@ -15,7 +16,9 @@ void SPARQS::print(const uint8_t *ids, const uint32_t *values, uint8_t count)
     {
         uint16_t offset = SPARQ_MESSAGE_HEADER_LENGTH + i * SPARQ_BYTES_PER_VALUE_PAIR;
         _message_buffer[offset] = ids[i];
-        _insert_to_buffer(offset + 1, values[i], false);
+
+        uint32_t v32 = *(uint32_t *)&values[i];
+        _insert_to_buffer(offset + 1, v32, false);
     }
 
     _send_buffer(count);
@@ -90,3 +93,7 @@ uint8_t SPARQS::xor8_cs(const uint8_t *data, uint32_t length)
 
     return cs;
 }
+
+template void SPARQS::print<int>(const uint8_t *, const int *, uint8_t);
+template void SPARQS::print<uint32_t>(const uint8_t *, const uint32_t *, uint8_t);
+template void SPARQS::print<float>(const uint8_t *, const float *, uint8_t);
