@@ -26,6 +26,7 @@ constexpr uint8_t SPARQ_MAX_VALUES = 255;
 #endif
 
 #include <initializer_list>
+#include <cstring>
 
 #define SPARQ_MESSAGE_HEADER_LENGTH 4
 #define SPARQ_BYTES_PER_VALUE_PAIR 5
@@ -37,6 +38,8 @@ class SPARQS
 {
 public:
     SPARQS(UART_HandleTypeDef *huart);
+
+    void print(const char *message);
 
     template <typename T>
     void print(T value);

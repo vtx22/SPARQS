@@ -4,6 +4,42 @@ SPARQS::SPARQS(UART_HandleTypeDef *huart) : _huart(huart)
 {
 }
 
+void SPARQS::print(const char *message)
+{
+    uint16_t message_length = strlen(message);
+
+    if (message_length == 0)
+    {
+        return;
+    }
+
+    if (message_length > SPARQ_MAX_VALUES * SPARQ_BYTES_PER_VALUE_PAIR)
+    {
+        message_length = SPARQ_MAX_VALUES * SPARQ_BYTES_PER_VALUE_PAIR;
+    }
+
+    // We have to add padding zeros because the message length must be a multiple of SPARQ_BYTES_PER_VALUE_PAIR
+    uint8_t padding_zeros = 0;
+    if (message_length % SPARQ_BYTES_PER_VALUE_PAIR != 0)
+    {
+        padding_zeros = SPARQ_BYTES_PER_VALUE_PAIR - (message_length % SPARQ_BYTES_PER_VALUE_PAIR);
+    };
+
+    uint8_t nval = (message_length + padding_zeros) / SPARQ_BYTES_PER_VALUE_PAIR;
+    _insert_header(0x10, nval);
+
+    for (uint16_t i = 0; i < message_length; i++)
+    {
+        _message_buffer[SPARQ_MESSAGE_HEADER_LENGTH + i] = message[i];
+    }
+    for (uint8_t p = 0; p < padding_zeros; p++)
+    {
+        _message_buffer[SPARQ_MESSAGE_HEADER_LENGTH + message_length + p] = 0x00;
+    }
+
+    _send_buffer(nval);
+}
+
 template <typename T>
 void SPARQS::print(T value)
 {
