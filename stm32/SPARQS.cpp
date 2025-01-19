@@ -24,7 +24,8 @@ void SPARQS::print(const uint8_t *ids, const T *values, uint8_t count)
     _send_buffer(count);
 }
 
-void SPARQS::print(const std::initializer_list<uint8_t> &ids, const std::initializer_list<uint32_t> &values)
+template <typename T>
+void SPARQS::print(const std::initializer_list<uint8_t> &ids, const std::initializer_list<T> &values)
 {
     if (ids.size() != values.size())
     {
@@ -48,7 +49,8 @@ void SPARQS::print(const std::initializer_list<uint8_t> &ids, const std::initial
     {
         uint16_t offset = SPARQ_MESSAGE_HEADER_LENGTH + i * SPARQ_BYTES_PER_VALUE_PAIR;
 
-        _insert_to_buffer(offset + 1, value, false);
+        uint32_t v32 = *(uint32_t *)&value;
+        _insert_to_buffer(offset + 1, v32, false);
         i++;
     }
 
@@ -97,3 +99,7 @@ uint8_t SPARQS::xor8_cs(const uint8_t *data, uint32_t length)
 template void SPARQS::print<int32_t>(const uint8_t *, const int32_t *, uint8_t);
 template void SPARQS::print<uint32_t>(const uint8_t *, const uint32_t *, uint8_t);
 template void SPARQS::print<float>(const uint8_t *, const float *, uint8_t);
+
+template void SPARQS::print<int32_t>(const std::initializer_list<uint8_t> &, const std::initializer_list<int32_t> &);
+template void SPARQS::print<uint32_t>(const std::initializer_list<uint8_t> &, const std::initializer_list<uint32_t> &);
+template void SPARQS::print<float>(const std::initializer_list<uint8_t> &, const std::initializer_list<float> &);
