@@ -21,12 +21,7 @@ void SPARQS::print(const uint8_t *ids, const uint32_t *values, uint8_t count)
         _message_buffer[offset + 4] = (values[i] & 0xFF);
     }
 
-    uint16_t len = SPARQ_MESSAGE_HEADER_LENGTH + count * SPARQ_BYTES_PER_VALUE_PAIR;
-
-    _message_buffer[len] = 0x00;
-    _message_buffer[len + 1] = xor8_cs(_message_buffer, len);
-
-    HAL_UART_Transmit(_huart, _message_buffer, len, SPARQS_HAL_MAX_DELAY);
+    _send_buffer(count);
 }
 
 void SPARQS::print(const std::initializer_list<uint8_t> &ids, const std::initializer_list<uint32_t> &values)
@@ -60,7 +55,12 @@ void SPARQS::print(const std::initializer_list<uint8_t> &ids, const std::initial
         i++;
     }
 
-    uint16_t len = SPARQ_MESSAGE_HEADER_LENGTH + ids.size() * SPARQ_BYTES_PER_VALUE_PAIR;
+    _send_buffer(ids.size());
+}
+
+void SPARQS::_send_buffer(uint8_t count)
+{
+    uint16_t len = SPARQ_MESSAGE_HEADER_LENGTH + count * SPARQ_BYTES_PER_VALUE_PAIR;
 
     _message_buffer[len] = 0x00;
     _message_buffer[len + 1] = xor8_cs(_message_buffer, len);
