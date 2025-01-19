@@ -113,17 +113,17 @@ void SPARQS::_insert_to_buffer(uint16_t offset, uint32_t value)
 {
     if (SPARQ_PLATFORM_LITTLE_ENDIAN)
     {
-        _message_buffer[offset] = (value >> 24);
-        _message_buffer[offset + 1] = (value >> 16);
-        _message_buffer[offset + 2] = (value >> 8);
-        _message_buffer[offset + 3] = (value & 0xFF);
+        _message_buffer[offset + 3] = (value >> 24);
+        _message_buffer[offset + 2] = (value >> 16);
+        _message_buffer[offset + 1] = (value >> 8);
+        _message_buffer[offset] = (value & 0xFF);
         return;
     }
 
-    _message_buffer[offset + 3] = (value >> 24);
-    _message_buffer[offset + 2] = (value >> 16);
-    _message_buffer[offset + 1] = (value >> 8);
-    _message_buffer[offset] = (value & 0xFF);
+    _message_buffer[offset] = (value >> 24);
+    _message_buffer[offset + 1] = (value >> 16);
+    _message_buffer[offset + 2] = (value >> 8);
+    _message_buffer[offset + 3] = (value & 0xFF);
 }
 
 void SPARQS::_send_buffer(uint8_t count)
