@@ -44,6 +44,7 @@ public:
     static uint8_t xor8_cs(const uint8_t *data, uint32_t length);
 
 private:
+    void _insert_to_buffer(uint16_t offset, uint32_t value, bool big_endian);
     void _send_buffer(uint8_t count);
 
     uint8_t _message_buffer[SPARQ_MAX_MESSAGE_LENGTH];

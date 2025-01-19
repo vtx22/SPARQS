@@ -15,10 +15,7 @@ void SPARQS::print(const uint8_t *ids, const uint32_t *values, uint8_t count)
     {
         uint16_t offset = SPARQ_MESSAGE_HEADER_LENGTH + i * SPARQ_BYTES_PER_VALUE_PAIR;
         _message_buffer[offset] = ids[i];
-        _message_buffer[offset + 1] = (values[i] >> 24);
-        _message_buffer[offset + 2] = (values[i] >> 16);
-        _message_buffer[offset + 3] = (values[i] >> 8);
-        _message_buffer[offset + 4] = (values[i] & 0xFF);
+        _insert_to_buffer(offset + 1, values[i], false);
     }
 
     _send_buffer(count);
@@ -48,14 +45,28 @@ void SPARQS::print(const std::initializer_list<uint8_t> &ids, const std::initial
     {
         uint16_t offset = SPARQ_MESSAGE_HEADER_LENGTH + i * SPARQ_BYTES_PER_VALUE_PAIR;
 
-        _message_buffer[offset + 1] = (value >> 24);
-        _message_buffer[offset + 2] = (value >> 16);
-        _message_buffer[offset + 3] = (value >> 8);
-        _message_buffer[offset + 4] = (value & 0xFF);
+        _insert_to_buffer(offset + 1, value, false);
         i++;
     }
 
     _send_buffer(ids.size());
+}
+
+void SPARQS::_insert_to_buffer(uint16_t offset, uint32_t value, bool big_endian)
+{
+    if (big_endian)
+    {
+        _message_buffer[offset] = (value >> 24);
+        _message_buffer[offset + 1] = (value >> 16);
+        _message_buffer[offset + 2] = (value >> 8);
+        _message_buffer[offset + 3] = (value & 0xFF);
+        return;
+    }
+
+    _message_buffer[offset + 3] = (value >> 24);
+    _message_buffer[offset + 2] = (value >> 16);
+    _message_buffer[offset + 1] = (value >> 8);
+    _message_buffer[offset] = (value & 0xFF);
 }
 
 void SPARQS::_send_buffer(uint8_t count)
