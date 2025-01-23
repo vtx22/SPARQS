@@ -4,6 +4,11 @@ SPARQS::SPARQS(UART_HandleTypeDef *huart) : _huart(huart)
 {
 }
 
+void SPARQS::set_default_id(uint8_t id)
+{
+    _default_id = id;
+}
+
 void SPARQS::print(const char *message)
 {
     uint16_t message_length = _strlen(message);
@@ -138,7 +143,6 @@ void SPARQS::_insert_to_buffer(uint16_t offset, uint32_t value)
     _message_buffer[offset + 2] = (value >> 16);
     _message_buffer[offset + 1] = (value >> 8);
     _message_buffer[offset] = (value & 0xFF);
-
 #else
     _message_buffer[offset] = (value >> 24);
     _message_buffer[offset + 1] = (value >> 16);

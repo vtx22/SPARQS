@@ -67,6 +67,8 @@ public:
 
     static uint8_t xor8_cs(const uint8_t *data, uint32_t length);
 
+    void set_default_id(uint8_t id);
+
 private:
     void _insert_header(uint8_t control, uint8_t count);
     void _insert_to_buffer(uint16_t offset, uint32_t value);
