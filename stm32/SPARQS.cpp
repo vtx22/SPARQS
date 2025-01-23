@@ -158,7 +158,12 @@ void SPARQS::_send_buffer(uint8_t count)
     _message_buffer[len] = 0x00;
     _message_buffer[len + 1] = xor8_cs(_message_buffer, len);
 
-    HAL_UART_Transmit(_huart, _message_buffer, len, SPARQS_HAL_MAX_DELAY);
+    _transmit_array(_message_buffer, len + 2);
+}
+
+void SPARQS::_transmit_array(const uint8_t *data, uint16_t length)
+{
+    HAL_UART_Transmit(_huart, data, length, SPARQS_HAL_MAX_DELAY);
 }
 
 uint16_t SPARQS::_strlen(const char *str) const

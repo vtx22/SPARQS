@@ -74,6 +74,8 @@ private:
     void _insert_to_buffer(uint16_t offset, uint32_t value);
     void _send_buffer(uint8_t count);
 
+    void _transmit_array(const uint8_t *data, uint16_t length);
+
     uint16_t _strlen(const char *str) const;
 
     uint8_t _message_buffer[SPARQ_MAX_MESSAGE_LENGTH];
