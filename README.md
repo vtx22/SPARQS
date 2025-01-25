@@ -34,12 +34,12 @@ Total message length: 4 + NVAL * 5 + 2
 
 Total message length: 4 + NVAL * 5 + 2
 
-NVAL is the string length / 5. 
-If the length is not divisible by 5, 1 - 4 padding bytes are added. NVAL is then length / 5 + 1
+NVAL is the string `length / 5`. 
+If the length is not divisible by 5, 1 - 4 padding bytes are added. NVAL is then `length / 5 + 1`
 
 
 ## Header
-The heade consists of the following 4 bytes
+The header consists of the following 4 bytes
 | Name | Length [Byte] | Description |
 | ---- | ---- | ---- |
 | SIG | 1 | Signature byte for message and receiver identification |
