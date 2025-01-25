@@ -8,12 +8,10 @@ All values are transmitted in non human readable form as bytes. This format is p
 ## Message Structure
 Each message has the same format and only differs in length based on the amount of data points transmitted per message.
 
+### Message for ID/value pairs
 | Name | Length [Byte] | Description |
 | ---- | ---- | ---- |
-| SIG | 1 | Signature byte for message and receiver identification |
-| CNT | 1 | Control byte for configuration flags |
-| NVAL | 1 | Number of values transmitted in this message |
-| HCS | 1 | Header XOR Checksum |
+| HDR | 4 | Message header with `0bXXXXX0XX` | 
 | ID0 | 1 | ID of first value | 
 | VAL0 | 4 | First value |
 | ID1 | 1 | ID of second value |
@@ -23,8 +21,34 @@ Each message has the same format and only differs in length based on the amount 
 
 Total message length: 4 + NVAL * 5 + 2
 
+### Message for strings
+| Name | Length [Byte] | Description |
+| ---- | ---- | ---- |
+| HDR | 4 | Message header with `0bXXXXX1XX` | 
+| CH0 | 1 | First char | 
+| CH1 | 1 | Second char |
+| ... | ... | ... |
+| CHN | 1 | Last char |
+| PD | 0 - 4 | Padding if message length is not a multiple of 5 |
+| CS | 2 | Message checksum bytes |
+
+Total message length: 4 + NVAL * 5 + 2
+
+NVAL is the string length / 5. 
+If the length is not divisible by 5, 1 - 4 padding bytes are added. NVAL is then length / 5 + 1
+
+
+## Header
+The heade consists of the following 4 bytes
+| Name | Length [Byte] | Description |
+| ---- | ---- | ---- |
+| SIG | 1 | Signature byte for message and receiver identification |
+| CNT | 1 | Control byte for configuration flags |
+| NVAL | 1 | Number of values transmitted in this message |
+| HCS | 1 | Header checksum |
+
 ### SIG
-The signature byte is used by the receiver to identify the sender.
+The signature byte is used by the receiver to identify the sender and is `0xFF` by default.
 ### CNT
 The control byte contains flags for configuration.
 | Bit | Function | Options | Remarks |
@@ -35,8 +59,8 @@ The control byte contains flags for configuration.
 | CNT[4] | reserved | - | |
 | CNT[3] | reserved | - | |
 | CNT[2] | Message Type | 0 = value/id pair, 1 = string |  |
-| CNT[1] | Data Sign | 0 = unsigned, 1 = signed | ignored if type is float or string |
-| CNT[0] | Data Type | 0 = float, 1 = integer | |
+| CNT[1] | Data Sign | 0 = unsigned, 1 = signed | Ignored if type is float or string |
+| CNT[0] | Data Type | 0 = float, 1 = integer | Ignored if type is string |
 ### NVAL
 Contains the total number of values transmitted.
 ### ID + VAL
