@@ -26,7 +26,7 @@ void SPARQS::print(const char *message)
     };
 
     uint8_t nval = (message_length + padding_zeros) / SPARQ_BYTES_PER_VALUE_PAIR;
-    _insert_header(0x04, nval);
+    _insert_header((uint8_t)SPARQ_CONTROL::MSG_TYPE, nval);
 
     for (uint16_t i = 0; i < message_length; i++)
     {
