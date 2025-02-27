@@ -11,7 +11,7 @@ Each message has the same format and only differs in length based on the amount 
 ### Message for ID/value pairs
 | Name | Length [Byte] | Description |
 | ---- | ---- | ---- |
-| HDR | 4 | Message header with `0bXXXXX0XX` | 
+| HDR | 5 | Message header with `CNT=0bXXXX00XX` | 
 | ID0 | 1 | ID of first value | 
 | VAL0 | 4 | First value |
 | ID1 | 1 | ID of second value |
@@ -19,32 +19,40 @@ Each message has the same format and only differs in length based on the amount 
 | ... | ... | ... |
 | CS | 2 | Message checksum bytes |
 
-Total message length: 4 + NVAL * 5 + 2
+Total message length: `5 + NVAL + 2`
+
+### Message for single ID bulk
+| Name | Length [Byte] | Description |
+| ---- | ---- | ---- |
+| HDR | 5 | Message header with `CNT=0bXXXX10XX` | 
+| ID | 1 | ID | 
+| VAL0 | 4 | First value |
+| VAL1 | 4 | Second value |
+| ... | ... | ... |
+| VALn | 4 | Last value |
+| CS | 2 | Message checksum bytes |
+
+Total message length: `5 + NVAL + 2` where NVAL is the number of payload bytes INCLUDING the ID byte
 
 ### Message for strings
 | Name | Length [Byte] | Description |
 | ---- | ---- | ---- |
-| HDR | 4 | Message header with `0bXXXXX1XX` | 
+| HDR | 5 | Message header with `CNT=0bXXXX01XX` | 
 | CH0 | 1 | First char | 
 | CH1 | 1 | Second char |
 | ... | ... | ... |
 | CHN | 1 | Last char |
-| PD | 0 - 4 | Padding if message length is not a multiple of 5 |
 | CS | 2 | Message checksum bytes |
 
-Total message length: 4 + NVAL * 5 + 2
-
-NVAL is the string `length / 5`. 
-If the length is not divisible by 5, 1 - 4 padding bytes are added. NVAL is then `length / 5 + 1`
-
+Total message length: `5 + NVAL + 2` where NVAL is the string `length`. 
 
 ## Header
-The header consists of the following 4 bytes
+The header consists of the following 5 bytes
 | Name | Length [Byte] | Description |
 | ---- | ---- | ---- |
 | SIG | 1 | Signature byte for message and receiver identification |
 | CNT | 1 | Control byte for configuration flags |
-| NVAL | 1 | Number of values transmitted in this message |
+| NVAL | 2 | Number of payload bytes transmitted in this message |
 | HCS | 1 | Header checksum |
 
 ### SIG
@@ -61,7 +69,7 @@ The control byte contains flags for configuration.
 | CNT[1] | Data Sign | 0 = unsigned, 1 = signed | Ignored if type is float or string |
 | CNT[0] | Data Type | 0 = float, 1 = integer | Ignored if type is string |
 ### NVAL
-Contains the total number of values transmitted.
+Contains the total number of payload bytes transmitted.
 ### ID + VAL
 Contains the value as float, uint32 or int32 and its ID.
 ### CS
