@@ -57,8 +57,7 @@ The control byte contains flags for configuration.
 | CNT[6] | Checksum Type | 0 = XOR8, 1 = CRC16 | CRC16 is not implemented yet |
 | CNT[5] | reserved | - | |
 | CNT[4] | reserved | - | |
-| CNT[3] | reserved | - | |
-| CNT[2] | Message Type | 0 = value/id pair, 1 = string |  |
+| CNT[3:2] | Message Type | 00 = value/id pair, 01 = string, 10=bulk single id |  |
 | CNT[1] | Data Sign | 0 = unsigned, 1 = signed | Ignored if type is float or string |
 | CNT[0] | Data Type | 0 = float, 1 = integer | Ignored if type is string |
 ### NVAL
