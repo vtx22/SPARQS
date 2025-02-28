@@ -19,7 +19,7 @@ Each message has the same format and only differs in length based on the amount 
 | ... | ... | ... |
 | CS | 2 | Message checksum bytes |
 
-Total message length: `5 + NVAL + 2`
+Total message length: `5 + PLL + 2`
 
 ### Message for single ID bulk
 | Name | Length [Byte] | Description |
@@ -32,7 +32,7 @@ Total message length: `5 + NVAL + 2`
 | VALn | 4 | Last value |
 | CS | 2 | Message checksum bytes |
 
-Total message length: `5 + NVAL + 2` where NVAL is the number of payload bytes INCLUDING the ID byte
+Total message length: `5 + PLL + 2` where `PLL` is the number of payload bytes INCLUDING the ID byte
 
 ### Message for strings
 | Name | Length [Byte] | Description |
@@ -44,7 +44,7 @@ Total message length: `5 + NVAL + 2` where NVAL is the number of payload bytes I
 | CHN | 1 | Last char |
 | CS | 2 | Message checksum bytes |
 
-Total message length: `5 + NVAL + 2` where NVAL is the string `length`. 
+Total message length: `5 + PLL + 2` where `PLL` is the string `length`. 
 
 ## Header
 The header consists of the following 5 bytes
@@ -52,7 +52,7 @@ The header consists of the following 5 bytes
 | ---- | ---- | ---- |
 | SIG | 1 | Signature byte for message and receiver identification |
 | CNT | 1 | Control byte for configuration flags |
-| NVAL | 2 | Number of payload bytes transmitted in this message |
+| PLL | 2 | Number of payload bytes transmitted in this message |
 | HCS | 1 | Header checksum |
 
 ### SIG
@@ -68,7 +68,7 @@ The control byte contains flags for configuration.
 | CNT[3:2] | Message Type | 00 = value/id pair, 01 = string, 10=bulk single id |  |
 | CNT[1] | Data Sign | 0 = unsigned, 1 = signed | Ignored if type is float or string |
 | CNT[0] | Data Type | 0 = float, 1 = integer | Ignored if type is string |
-### NVAL
+### PLL
 Contains the total number of payload bytes transmitted.
 ### ID + VAL
 Contains the value as float, uint32 or int32 and its ID.
