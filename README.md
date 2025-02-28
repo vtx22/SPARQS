@@ -17,9 +17,9 @@ Each message has the same format and only differs in length based on the amount 
 | ID1 | 1 | ID of second value |
 | VAL1 | 4 | Second value |
 | ... | ... | ... |
-| CS | 2 | Message checksum bytes |
+| CS | 1 | Message checksum byte |
 
-Total message length: `5 + PLL + 2`
+Total message length: `5 + PLL + 1`
 
 ### Message for single ID bulk
 | Name | Length [Byte] | Description |
@@ -30,9 +30,9 @@ Total message length: `5 + PLL + 2`
 | VAL1 | 4 | Second value |
 | ... | ... | ... |
 | VALn | 4 | Last value |
-| CS | 2 | Message checksum bytes |
+| CS | 1 | Message checksum byte |
 
-Total message length: `5 + PLL + 2` where `PLL` is the number of payload bytes INCLUDING the ID byte
+Total message length: `5 + PLL + 1` where `PLL` is the number of payload bytes INCLUDING the ID byte
 
 ### Message for strings
 | Name | Length [Byte] | Description |
@@ -42,9 +42,9 @@ Total message length: `5 + PLL + 2` where `PLL` is the number of payload bytes I
 | CH1 | 1 | Second char |
 | ... | ... | ... |
 | CHN | 1 | Last char |
-| CS | 2 | Message checksum bytes |
+| CS | 1 | Message checksum bytes |
 
-Total message length: `5 + PLL + 2` where `PLL` is the string `length`. 
+Total message length: `5 + PLL + 1` where `PLL` is the string `length`. 
 
 ## Header
 The header consists of the following 5 bytes
@@ -73,4 +73,4 @@ Contains the total number of payload bytes transmitted.
 ### ID + VAL
 Contains the value as float, uint32 or int32 and its ID.
 ### CS
-Configurable Checksum. Default: XOR Checksum
+XOR8 checksum byte or undefined when message checksum is turned off. Header checksum cannot be turned of.
