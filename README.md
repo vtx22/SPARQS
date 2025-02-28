@@ -62,7 +62,7 @@ The control byte contains flags for configuration.
 | Bit | Function | Options | Remarks |
 | ---- | ---- | ---- | ---- |
 | CNT[7] | Data Byte Order | 0 = MSB, 1 = LSB first | Byte order is the same as sender endianess |
-| CNT[6] | Checksum Type | 0 = XOR8, 1 = CRC16 | CRC16 is not implemented yet |
+| CNT[6] | Checksum Type | 0 = XOR8, 1 = NONE | Only applies to the payload checksum, header checksum is always XOR8 |
 | CNT[5] | reserved | - | |
 | CNT[4] | reserved | - | |
 | CNT[3:2] | Message Type | 00 = value/id pair, 01 = string, 10=bulk single id |  |
