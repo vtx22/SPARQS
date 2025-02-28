@@ -32,7 +32,7 @@ Total message length: `5 + PLL + 1`
 | VALn | 4 | Last value |
 | CS | 1 | Message checksum byte |
 
-Total message length: `5 + PLL + 1` where `PLL` is the number of payload bytes INCLUDING the ID byte
+Total message length: `5 + PLL + 1` where `PLL` is the number of payload bytes **including** the ID byte
 
 ### Message for strings
 | Name | Length [Byte] | Description |
@@ -61,7 +61,7 @@ The signature byte is used by the receiver to identify the sender and is `0xFF` 
 The control byte contains flags for configuration.
 | Bit | Function | Options | Remarks |
 | ---- | ---- | ---- | ---- |
-| CNT[7] | Data Byte Order | 0 = MSB, 1 = LSB first | Byte order is the same as sender endianess |
+| CNT[7] | Data Byte Order | 0 = MSB first, 1 = LSB first | Byte order is the same as sender endianess if SPARQS libraries are used |
 | CNT[6] | Checksum Type | 0 = NONE, 1 = XOR8 | Only applies to the payload checksum, header checksum is always XOR8 |
 | CNT[5] | reserved | - | |
 | CNT[4] | reserved | - | |
@@ -73,4 +73,4 @@ Contains the total number of payload bytes transmitted.
 ### ID + VAL
 Contains the value as float, uint32 or int32 and its ID.
 ### CS
-XOR8 checksum byte or undefined when message checksum is turned off. Header checksum cannot be turned of.
+XOR8 checksum byte or undefined when message checksum is turned off. Header checksum cannot be turned off.
