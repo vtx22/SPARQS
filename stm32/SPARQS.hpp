@@ -2,9 +2,6 @@
 
 #include <cstdint>
 
-// === Lower the max values for a smaller message buffer ===
-constexpr uint8_t SPARQ_MAX_VALUES = 255;
-
 // === DONT CHANGE ANYTHING BELOW ===
 
 #if defined(STM32F0)
@@ -28,22 +25,30 @@ constexpr uint8_t SPARQ_MAX_VALUES = 255;
 #include <initializer_list>
 #include <type_traits>
 
-#define SPARQ_MESSAGE_HEADER_LENGTH 4
+#define SPARQ_MESSAGE_HEADER_LENGTH 5
 #define SPARQ_BYTES_PER_VALUE_PAIR 5
-#define SPARQ_MAX_MESSAGE_LENGTH (SPARQ_MESSAGE_HEADER_LENGTH + SPARQ_MAX_VALUES * SPARQ_BYTES_PER_VALUE_PAIR + 2)
+#define SPARQ_CHECKSUM_LENGTH 1
+#define SPARQ_MAX_PAYLOAD_LENGTH 0xFFFF
+#define SPARQ_MAX_MESSAGE_LENGTH (SPARQ_MESSAGE_HEADER_LENGTH + SPARQ_MAX_PAYLOAD_LENGTH + SPARQ_CHECKSUM_LENGTH)
 
 #define SPARQS_HAL_MAX_DELAY 100
 
 constexpr bool SPARQ_PLATFORM_LITTLE_ENDIAN = true;
 
-enum class SPARQ_CONTROL : uint8_t
+enum class sparq_header_control_t : uint8_t
 {
-    BYTE_ORDER = (1 << 7), // 0 = MSB first, 1 = LSB first
-    CS_TYPE = (1 << 6),    // 0 = XOR8, 1 = CRC16
-    MSG_TYPE = (1 << 2),   // 0 = value/id pair, 1 = string
-    DATA_SIGN = (1 << 1),  // 0 = unsigned, 1 = signed
-    DATA_TYPE = (1 << 0)   // 0 = float, 1 = integer
+    LSB_FIRST = (1 << 7),
+    CS_EN = (1 << 6),
+    MSG_TYPE = (1 << 2) + (1 << 3),
+    SIGNED = (1 << 1),
+    INTEGER = (1 << 0),
+};
 
+enum class sparq_message_type_t : uint8_t
+{
+    ID_PAIR = 0b00,
+    STRING = 0b01,
+    BULK_SINGLE_ID = 0b10,
 };
 
 class SPARQS
@@ -70,11 +75,11 @@ public:
     void set_default_id(uint8_t id);
 
 private:
-    void _insert_header(uint8_t control, uint8_t count);
+    void _insert_header(uint8_t control, uint16_t payload_length);
     void _insert_to_buffer(uint16_t offset, uint32_t value);
-    void _send_buffer(uint8_t count);
+    void _send_buffer(uint16_t payload_length);
 
-    void _transmit_array(const uint8_t *data, uint16_t length);
+    void _transmit_array(const uint8_t *data, uint32_t length);
 
     uint16_t _strlen(const char *str) const;
 

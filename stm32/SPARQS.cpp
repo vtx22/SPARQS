@@ -18,26 +18,14 @@ void SPARQS::print(const char *message)
         return;
     }
 
-    // We have to add padding zeros because the message length must be a multiple of SPARQ_BYTES_PER_VALUE_PAIR
-    uint8_t padding_zeros = 0;
-    if (message_length % SPARQ_BYTES_PER_VALUE_PAIR != 0)
-    {
-        padding_zeros = SPARQ_BYTES_PER_VALUE_PAIR - (message_length % SPARQ_BYTES_PER_VALUE_PAIR);
-    };
-
-    uint8_t nval = (message_length + padding_zeros) / SPARQ_BYTES_PER_VALUE_PAIR;
-    _insert_header((uint8_t)SPARQ_CONTROL::MSG_TYPE, nval);
+    _insert_header((uint8_t)sparq_message_type_t::STRING << 2, message_length);
 
     for (uint16_t i = 0; i < message_length; i++)
     {
         _message_buffer[SPARQ_MESSAGE_HEADER_LENGTH + i] = message[i];
     }
-    for (uint8_t p = 0; p < padding_zeros; p++)
-    {
-        _message_buffer[SPARQ_MESSAGE_HEADER_LENGTH + message_length + p] = 0x00;
-    }
 
-    _send_buffer(nval);
+    _send_buffer(message_length);
 }
 
 template <typename T>
@@ -58,15 +46,17 @@ void SPARQS::print(const uint8_t *ids, const T *values, uint8_t count)
     uint8_t control = 0x00;
     if (!std::is_same<T, float>::value)
     {
-        control |= (uint8_t)SPARQ_CONTROL::DATA_TYPE;
+        control |= (uint8_t)sparq_header_control_t::INTEGER;
     }
 
     if (std::is_same<T, int>::value || std::is_same<T, int32_t>::value)
     {
-        control |= (uint8_t)SPARQ_CONTROL::DATA_SIGN;
+        control |= (uint8_t)sparq_header_control_t::SIGNED;
     }
 
-    _insert_header(control, count);
+    uint16_t payload_length = count * SPARQ_BYTES_PER_VALUE_PAIR;
+
+    _insert_header(control, payload_length);
 
     for (uint8_t i = 0; i < count; i++)
     {
@@ -77,7 +67,7 @@ void SPARQS::print(const uint8_t *ids, const T *values, uint8_t count)
         _insert_to_buffer(offset + 1, v32);
     }
 
-    _send_buffer(count);
+    _send_buffer(payload_length);
 }
 
 template <typename T>
@@ -91,15 +81,17 @@ void SPARQS::print(const std::initializer_list<uint8_t> &ids, const std::initial
     uint8_t control = 0x00;
     if (!std::is_same<T, float>::value)
     {
-        control |= (uint8_t)SPARQ_CONTROL::DATA_TYPE;
+        control |= (uint8_t)sparq_header_control_t::INTEGER;
     }
 
     if (std::is_same<T, int>::value || std::is_same<T, int32_t>::value)
     {
-        control |= (uint8_t)SPARQ_CONTROL::DATA_SIGN;
+        control |= (uint8_t)sparq_header_control_t::SIGNED;
     }
 
-    _insert_header(control, ids.size());
+    uint16_t payload_length = ids.size() * SPARQ_BYTES_PER_VALUE_PAIR;
+
+    _insert_header(control, payload_length);
 
     uint8_t i = 0;
     for (const auto &id : ids)
@@ -118,50 +110,44 @@ void SPARQS::print(const std::initializer_list<uint8_t> &ids, const std::initial
         i++;
     }
 
-    _send_buffer(ids.size());
+    _send_buffer(payload_length);
 }
 
-void SPARQS::_insert_header(uint8_t control, uint8_t count)
+void SPARQS::_insert_header(uint8_t control, uint16_t payload_length)
 {
     control = control & 0x0F;
+    control |= (uint8_t)sparq_header_control_t::CS_EN;
 
     if (SPARQ_PLATFORM_LITTLE_ENDIAN)
     {
-        control |= (uint8_t)SPARQ_CONTROL::BYTE_ORDER;
+        control |= (uint8_t)sparq_header_control_t::LSB_FIRST;
     }
 
     _message_buffer[0] = _signature;
     _message_buffer[1] = control;
-    _message_buffer[2] = count;
-    _message_buffer[3] = xor8_cs(_message_buffer, 3);
+    _message_buffer[2] = payload_length >> 8;
+    _message_buffer[3] = payload_length & 0xFF;
+    _message_buffer[4] = xor8_cs(_message_buffer, 4);
 }
 
 void SPARQS::_insert_to_buffer(uint16_t offset, uint32_t value)
 {
-#if (SPARQ_PLATFORM_LITTLE_ENDIAN)
-    _message_buffer[offset + 3] = (value >> 24);
-    _message_buffer[offset + 2] = (value >> 16);
-    _message_buffer[offset + 1] = (value >> 8);
-    _message_buffer[offset] = (value & 0xFF);
-#else
     _message_buffer[offset] = (value >> 24);
     _message_buffer[offset + 1] = (value >> 16);
     _message_buffer[offset + 2] = (value >> 8);
     _message_buffer[offset + 3] = (value & 0xFF);
-#endif
 }
 
-void SPARQS::_send_buffer(uint8_t count)
+void SPARQS::_send_buffer(uint16_t payload_length)
 {
-    uint16_t len = SPARQ_MESSAGE_HEADER_LENGTH + count * SPARQ_BYTES_PER_VALUE_PAIR;
+    uint32_t len = SPARQ_MESSAGE_HEADER_LENGTH + payload_length + SPARQ_CHECKSUM_LENGTH;
 
-    _message_buffer[len] = 0x00;
-    _message_buffer[len + 1] = xor8_cs(_message_buffer, len);
+    _message_buffer[len - 1] = xor8_cs(_message_buffer, len - 1);
 
-    _transmit_array(_message_buffer, len + 2);
+    _transmit_array(_message_buffer, len);
 }
 
-void SPARQS::_transmit_array(const uint8_t *data, uint16_t length)
+void SPARQS::_transmit_array(const uint8_t *data, uint32_t length)
 {
     HAL_UART_Transmit(_huart, data, length, SPARQS_HAL_MAX_DELAY);
 }
@@ -169,7 +155,7 @@ void SPARQS::_transmit_array(const uint8_t *data, uint16_t length)
 uint16_t SPARQS::_strlen(const char *str) const
 {
     uint16_t len = 0;
-    while (str[len] != '\0' && len < SPARQ_MAX_VALUES * SPARQ_BYTES_PER_VALUE_PAIR)
+    while (str[len] != '\0' && len < SPARQ_MAX_PAYLOAD_LENGTH)
     {
         len++;
     }
