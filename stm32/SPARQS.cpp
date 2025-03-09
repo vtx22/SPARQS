@@ -58,6 +58,7 @@ void SPARQS::print(const uint8_t *ids, const T *values, uint8_t count)
     for (uint8_t i = 0; i < count; i++)
     {
         uint16_t offset = SPARQ_MESSAGE_HEADER_LENGTH + i * SPARQ_BYTES_PER_VALUE_PAIR;
+        uint32_t v32 = *(uint32_t *)&values[i];
         _message_buffer[offset] = ids[i];
         _message_buffer[offset + 1] = v32 >> 24;
         _message_buffer[offset + 2] = v32 >> 16;
