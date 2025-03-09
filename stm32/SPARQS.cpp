@@ -20,10 +20,7 @@ void SPARQS::print(const char *message)
 
     _insert_header((uint8_t)sparq_message_type_t::STRING << 2, message_length);
 
-    for (uint16_t i = 0; i < message_length; i++)
-    {
-        _message_buffer[SPARQ_MESSAGE_HEADER_LENGTH + i] = message[i];
-    }
+    std::copy(message, message + message_length, _message_buffer + SPARQ_MESSAGE_HEADER_LENGTH);
 
     _send_buffer(message_length);
 }
@@ -62,9 +59,10 @@ void SPARQS::print(const uint8_t *ids, const T *values, uint8_t count)
     {
         uint16_t offset = SPARQ_MESSAGE_HEADER_LENGTH + i * SPARQ_BYTES_PER_VALUE_PAIR;
         _message_buffer[offset] = ids[i];
-
-        uint32_t v32 = *(uint32_t *)&values[i];
-        _insert_to_buffer(offset + 1, v32);
+        _message_buffer[offset + 1] = v32 >> 24;
+        _message_buffer[offset + 2] = v32 >> 16;
+        _message_buffer[offset + 3] = v32 >> 8;
+        _message_buffer[offset + 4] = v32 & 0xFF;
     }
 
     _send_buffer(payload_length);
@@ -96,18 +94,18 @@ void SPARQS::print(const std::initializer_list<uint8_t> &ids, const std::initial
     uint8_t i = 0;
     for (const auto &id : ids)
     {
-        _message_buffer[SPARQ_MESSAGE_HEADER_LENGTH + i * SPARQ_BYTES_PER_VALUE_PAIR] = id;
-        i++;
+        _message_buffer[SPARQ_MESSAGE_HEADER_LENGTH + i++ * SPARQ_BYTES_PER_VALUE_PAIR] = id;
     }
 
     i = 0;
     for (const auto &value : values)
     {
-        uint16_t offset = SPARQ_MESSAGE_HEADER_LENGTH + i * SPARQ_BYTES_PER_VALUE_PAIR;
-
+        uint16_t offset = SPARQ_MESSAGE_HEADER_LENGTH + i++ * SPARQ_BYTES_PER_VALUE_PAIR + 1;
         uint32_t v32 = *(uint32_t *)&value;
-        _insert_to_buffer(offset + 1, v32);
-        i++;
+        _message_buffer[offset] = v32 >> 24;
+        _message_buffer[offset + 1] = v32 >> 16;
+        _message_buffer[offset + 2] = v32 >> 8;
+        _message_buffer[offset + 3] = v32 & 0xFF;
     }
 
     _send_buffer(payload_length);
@@ -128,14 +126,6 @@ void SPARQS::_insert_header(uint8_t control, uint16_t payload_length)
     _message_buffer[2] = payload_length >> 8;
     _message_buffer[3] = payload_length & 0xFF;
     _message_buffer[4] = xor8_cs(_message_buffer, 4);
-}
-
-void SPARQS::_insert_to_buffer(uint16_t offset, uint32_t value)
-{
-    _message_buffer[offset] = (value >> 24);
-    _message_buffer[offset + 1] = (value >> 16);
-    _message_buffer[offset + 2] = (value >> 8);
-    _message_buffer[offset + 3] = (value & 0xFF);
 }
 
 void SPARQS::_send_buffer(uint16_t payload_length)

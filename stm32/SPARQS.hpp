@@ -24,6 +24,7 @@
 
 #include <initializer_list>
 #include <type_traits>
+#include <algorithm>
 
 #define SPARQ_MESSAGE_HEADER_LENGTH 5
 #define SPARQ_BYTES_PER_VALUE_PAIR 5
@@ -76,7 +77,6 @@ public:
 
 private:
     void _insert_header(uint8_t control, uint16_t payload_length);
-    void _insert_to_buffer(uint16_t offset, uint32_t value);
     void _send_buffer(uint16_t payload_length);
 
     void _transmit_array(const uint8_t *data, uint32_t length);
