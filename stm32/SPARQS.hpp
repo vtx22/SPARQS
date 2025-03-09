@@ -34,7 +34,11 @@
 
 #define SPARQS_HAL_MAX_DELAY 100
 
-constexpr bool SPARQ_PLATFORM_LITTLE_ENDIAN = true;
+constexpr bool sparq_is_little_endian()
+{
+    constexpr uint32_t value = 0x01020304;
+    return reinterpret_cast<const uint8_t *>(&value)[0] == 0x04;
+}
 
 enum class sparq_header_control_t : uint8_t
 {

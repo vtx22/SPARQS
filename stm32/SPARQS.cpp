@@ -117,7 +117,7 @@ void SPARQS::_insert_header(uint8_t control, uint16_t payload_length)
     control = control & 0x0F;
     control |= (uint8_t)sparq_header_control_t::CS_EN;
 
-    if (SPARQ_PLATFORM_LITTLE_ENDIAN)
+    if (sparq_is_little_endian())
     {
         control |= (uint8_t)sparq_header_control_t::LSB_FIRST;
     }
