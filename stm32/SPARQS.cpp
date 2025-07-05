@@ -112,6 +112,45 @@ void SPARQS::print(const std::initializer_list<uint8_t> &ids, const std::initial
     _send_buffer(payload_length);
 }
 
+template <typename T>
+void SPARQS::print(const std::initializer_list<T> &values)
+{
+
+    uint8_t control = 0x00;
+    if (!std::is_same<T, float>::value)
+    {
+        control |= (uint8_t)sparq_header_control_t::INTEGER;
+    }
+
+    if (std::is_same<T, int>::value || std::is_same<T, int32_t>::value)
+    {
+        control |= (uint8_t)sparq_header_control_t::SIGNED;
+    }
+
+    uint16_t payload_length = values.size() * SPARQ_BYTES_PER_VALUE_PAIR;
+
+    _insert_header(control, payload_length);
+
+    uint8_t i = 0;
+    for (i = 0; i < values.size(); i++)
+    {
+        _message_buffer[SPARQ_MESSAGE_HEADER_LENGTH + i * SPARQ_BYTES_PER_VALUE_PAIR] = i + 1;
+    }
+
+    i = 0;
+    for (const auto &value : values)
+    {
+        uint16_t offset = SPARQ_MESSAGE_HEADER_LENGTH + i++ * SPARQ_BYTES_PER_VALUE_PAIR + 1;
+        uint32_t v32 = *(uint32_t *)&value;
+        _message_buffer[offset] = v32 >> 24;
+        _message_buffer[offset + 1] = v32 >> 16;
+        _message_buffer[offset + 2] = v32 >> 8;
+        _message_buffer[offset + 3] = v32 & 0xFF;
+    }
+
+    _send_buffer(payload_length);
+}
+
 void SPARQS::_insert_header(uint8_t control, uint16_t payload_length)
 {
     control = control & 0x0F;
@@ -188,3 +227,9 @@ template void SPARQS::print<unsigned int>(const std::initializer_list<uint8_t> &
 template void SPARQS::print<int32_t>(const std::initializer_list<uint8_t> &, const std::initializer_list<int32_t> &);
 template void SPARQS::print<uint32_t>(const std::initializer_list<uint8_t> &, const std::initializer_list<uint32_t> &);
 template void SPARQS::print<float>(const std::initializer_list<uint8_t> &, const std::initializer_list<float> &);
+
+template void SPARQS::print<int>(const std::initializer_list<int> &);
+template void SPARQS::print<unsigned int>(const std::initializer_list<unsigned int> &);
+template void SPARQS::print<int32_t>(const std::initializer_list<int32_t> &);
+template void SPARQS::print<uint32_t>(const std::initializer_list<uint32_t> &);
+template void SPARQS::print<float>(const std::initializer_list<float> &);

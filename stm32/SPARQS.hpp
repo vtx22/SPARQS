@@ -75,6 +75,9 @@ public:
     template <typename T>
     void print(const std::initializer_list<uint8_t> &ids, const std::initializer_list<T> &values);
 
+    template <typename T>
+    void print(const std::initializer_list<T> &values);
+
     static uint8_t xor8_cs(const uint8_t *data, uint32_t length);
 
     void set_default_id(uint8_t id);
