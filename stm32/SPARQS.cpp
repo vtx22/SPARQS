@@ -151,6 +151,69 @@ void SPARQS::print(const std::initializer_list<T> &values)
     _send_buffer(payload_length);
 }
 
+void SPARQS::remote_clear_console()
+{
+    _send_command(sparq_sender_command_t::CLEAR_CONSOLE);
+}
+
+void SPARQS::remote_set_dataset_name(uint8_t ds_id, const char *name)
+{
+    uint8_t buffer[64];
+
+    buffer[0] = ds_id;
+
+    uint16_t name_length = _strlen(name);
+    if (name_length > 63)
+    {
+        name_length = 63;
+    }
+
+    std::memcpy(buffer + 1, name, name_length);
+
+    _send_command(sparq_sender_command_t::SET_DATASET_NAME, buffer, name_length + 1);
+}
+
+void SPARQS::remote_delete_all_datasets()
+{
+    _send_command(sparq_sender_command_t::DELETE_ALL_DATASETS);
+}
+
+void SPARQS::remote_delete_dataset(uint8_t id)
+{
+    _send_command(sparq_sender_command_t::DELETE_SINGLE_DATASET, &id, 1);
+}
+
+void SPARQS::remote_clear_all_datasets()
+{
+    _send_command(sparq_sender_command_t::CLEAR_ALL_DATASETS);
+}
+
+void SPARQS::remote_clear_dataset(uint8_t id)
+{
+    _send_command(sparq_sender_command_t::CLEAR_SINGLE_DATASET, &id, 1);
+}
+
+void SPARQS::remote_set_plot_type(sparq_plot_t plot_type)
+{
+    _send_command(sparq_sender_command_t::SWITCH_PLOT_TYPE, (uint8_t *)&plot_type, 1);
+}
+
+void SPARQS::_send_command(sparq_sender_command_t command)
+{
+    _send_command(command, nullptr, 0);
+}
+
+void SPARQS::_send_command(sparq_sender_command_t command, const uint8_t *payload, uint32_t payload_length)
+{
+    uint8_t control = (uint8_t)sparq_message_type_t::SENDER_COMMAND << 2;
+    _insert_header(control, payload_length + 1);
+
+    _message_buffer[SPARQ_MESSAGE_HEADER_LENGTH] = (uint8_t)command;
+    std::memcpy(_message_buffer + SPARQ_MESSAGE_HEADER_LENGTH + 1, payload, payload_length);
+
+    _send_buffer(payload_length + 1);
+}
+
 void SPARQS::_insert_header(uint8_t control, uint16_t payload_length)
 {
     control = control & 0x0F;

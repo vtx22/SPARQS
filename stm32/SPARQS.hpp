@@ -25,6 +25,7 @@
 #include <initializer_list>
 #include <type_traits>
 #include <algorithm>
+#include <cstring>
 
 #define SPARQ_MESSAGE_HEADER_LENGTH 5
 #define SPARQ_BYTES_PER_VALUE_PAIR 5
@@ -54,6 +55,24 @@ enum class sparq_message_type_t : uint8_t
     ID_PAIR = 0b00,
     STRING = 0b01,
     BULK_SINGLE_ID = 0b10,
+    SENDER_COMMAND = 0b11,
+};
+
+enum class sparq_sender_command_t : uint8_t
+{
+    CLEAR_CONSOLE,         // Remote clear the console
+    CLEAR_ALL_DATASETS,    // Remote clear all datasets data but keep the settings
+    CLEAR_SINGLE_DATASET,  // Remote clear a single datasets data but keep the settings
+    DELETE_ALL_DATASETS,   // Remote delete all datasets
+    DELETE_SINGLE_DATASET, // Remote delete single dataset
+    SET_DATASET_NAME,      // Remote set the name of a given dataset
+    SWITCH_PLOT_TYPE,      // Remote switch the plot type (e.g. line, heatmap, etc.)
+};
+
+enum class sparq_plot_t : uint8_t
+{
+    LINE,
+    HEATMAP,
 };
 
 class SPARQS
@@ -80,6 +99,14 @@ public:
 
     static uint8_t xor8_cs(const uint8_t *data, uint32_t length);
 
+    void remote_clear_console();
+    void remote_set_dataset_name(uint8_t ds_id, const char *name);
+    void remote_delete_all_datasets();
+    void remote_delete_dataset(uint8_t id);
+    void remote_clear_all_datasets();
+    void remote_clear_dataset(uint8_t id);
+    void remote_set_plot_type(sparq_plot_t plot_type);
+
     void set_default_id(uint8_t id);
 
 private:
@@ -87,6 +114,8 @@ private:
     void _send_buffer(uint16_t payload_length);
 
     void _transmit_array(const uint8_t *data, uint32_t length);
+    void _send_command(sparq_sender_command_t command);
+    void _send_command(sparq_sender_command_t command, const uint8_t *payload, uint32_t payload_length);
 
     uint16_t _strlen(const char *str) const;
 
