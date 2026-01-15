@@ -81,6 +81,7 @@ public:
     SPARQS(UART_HandleTypeDef *huart);
 
     void print(const char *message);
+    void print(char *message);
 
     template <typename T>
     void print(T value);

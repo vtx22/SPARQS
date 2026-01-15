@@ -9,6 +9,11 @@ void SPARQS::set_default_id(uint8_t id)
     _default_id = id;
 }
 
+void SPARQS::print(char *message)
+{
+    return print((const char *)message);
+}
+
 void SPARQS::print(const char *message)
 {
     uint16_t message_length = _strlen(message);
